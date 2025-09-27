@@ -1,0 +1,753 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Switzerland → Italy → UAE → India (Nov 20 – Dec 6, 2025)</title>
+  <style>
+    :root{
+      --bg:#fafafa; --card:#ffffff; --ink:#0b0b0c; --muted:#5b5f66;
+      --line:#d4d4d8; --ring:#e5e7eb; --shadow:0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.06);
+      --pill:#f8fafc;
+      --accent-1:#5B8DEF; --accent-2:#00BFA6; --accent-3:#FFC107; --accent-4:#AB47BC;
+      --accent-5:#26C6DA; --accent-6:#9CCC65; --accent-7:#42A5F5; --accent-8:#FF7043;
+      --accent-9:#7E57C2; --accent-10:#66BB6A; --accent-11:#EC407A; --accent-12:#29B6F6;
+      --overlay: rgba(15, 18, 21, .5);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:var(--bg);
+      font: 14px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Helvetica Neue,Arial,"Noto Sans","Liberation Sans",sans-serif;
+      color:var(--ink);
+    }
+    .wrap{max-width:720px;margin-inline:auto;padding:16px}
+    h1{font-size:22px;letter-spacing:-.01em;margin:0 0 6px 0}
+    .muted{color:var(--muted)}
+    .legend{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:10px 0 16px}
+    .legend .item{display:inline-flex;gap:6px;align-items:center;font-size:12px;color:var(--muted)}
+    .legend .code{font-size:10px;font-weight:600;color:#374151}
+
+    .base{background:var(--card);border:1px solid var(--ring);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+    .base + .gutter{height:24px;border-left:1px dotted var(--line);margin:8px 0 16px 18px}
+
+    .base-head{display:flex;gap:10px;align-items:flex-start}
+    .pin{width:18px;min-width:18px;height:18px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:#6b7280}
+    .base-title{font-weight:700;margin:0;font-size:16px;letter-spacing:.01em}
+    .base-sub{margin:2px 0 0;color:var(--muted);font-size:13px}
+    .note{display:flex;gap:8px;align-items:center;color:#4b5563;font-size:12px;margin-top:4px}
+
+    .hr-dot{border-top:1px dotted var(--line);margin:12px 0}
+
+    .day{position:relative;background:#fbfbfc;border:1px solid var(--ring);border-radius:12px;box-shadow:var(--shadow);padding:10px 12px}
+    .day + .day{margin-top:10px}
+    .bar{position:absolute;inset:0 auto 0 0;width:6px;border-radius:12px 0 0 12px}
+    .day-head{display:flex;gap:8px;align-items:center}
+    .date{font-weight:600}
+    .extras{margin-left:auto;display:inline-flex;gap:8px;align-items:center}
+    .pill{background:var(--pill);border:1px solid var(--ring);padding:2px 8px;border-radius:999px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:#374151}
+    ul{margin:8px 0 0 1.1rem;padding:0}
+    li{margin:4px 0}
+
+    /* tiny “material-like” icons (stroke currentColor) */
+    .ico{width:16px;height:16px;stroke:currentColor;stroke-width:1.75;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+    /* Tail/logo wrappers */
+    .tail{display:inline-flex;gap:6px;align-items:center}
+    .tail .logo{height:14px;width:auto;display:block}
+    .tail .label{font-size:10px;font-weight:600;color:#374151}
+
+    /* Info button — centered */
+    .info-btn{
+      display:flex; align-items:center; justify-content:center;
+      width:20px;height:20px; line-height:0;
+      border-radius:50%; border:1px solid var(--ring); background:#fff;
+      box-shadow:var(--shadow); cursor:pointer; padding:0;
+    }
+    .info-btn svg{width:12px;height:12px;color:#475569;display:block}
+
+    /* Modal */
+    .modal{position:fixed;inset:0;display:none;align-items:flex-end;justify-content:center;background:var(--overlay);padding:12px}
+    .modal[open]{display:flex}
+    .sheet{width:min(640px,100%);background:#fff;border-radius:14px;border:1px solid var(--ring);box-shadow:var(--shadow);padding:14px}
+    .sheet h3{margin:0 0 6px 0;font-size:16px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .row{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px dashed var(--ring);font-size:13px}
+    .row:last-child{border-bottom:0}
+    .label{color:#6b7280}
+    .close{margin-top:12px;display:flex;justify-content:flex-end}
+    .btn{appearance:none;border:1px solid var(--ring);background:#fff;border-radius:10px;padding:8px 12px;box-shadow:var(--shadow);cursor:pointer}
+    .btn:active{transform:translateY(1px)}
+    @media (min-width:720px){ .modal{align-items:center} }
+  </style>
+</head>
+<body>
+  <!-- SVG sprite with your airline logos -->
+  <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+    <!-- Emirates (from your uploaded SVG) -->
+    <symbol id="logo-emirates" viewBox="-35.99655 -63.5 311.9701 381">
+      <path fill="#d71a21" d="M0 0h239.977v254H0z"/><g fill="#fff"><path d="M126.49 222.851c0 2.956-1.541 5.9-4.627 8.82-2.96 2.756-6.09 4.126-9.402 4.126-4.245 0-7.949-1.914-11.111-5.748-2.96-3.606-4.445-7.713-4.445-12.322 0-5.65 1.82-10.928 5.46-15.827 3.638-4.996 7.987-8.498 13.05-10.504 1.62-.658 3.15-.987 4.59-.987 1.7 0 3.07.46 4.11 1.381.97.89 1.456 2.002 1.456 3.336 0 1.565-.58 3.22-1.74 4.965-1.047 1.558-2.533 2.951-4.46 4.179-2.795 1.772-5.687 2.657-8.675 2.657-.86 0-1.722-.08-2.586-.243 1.316 2.694 3.273 4.042 5.87 4.042 2.42 0 4.79-.857 7.11-2.57 2.55-1.88 4.69-4.39 6.42-7.53 1.73-3.21 2.59-6.34 2.59-9.39 0-3.81-1.25-6.87-3.75-9.17-2.15-1.98-4.83-2.97-8.02-2.97-3.08 0-6.35.86-9.81 2.59-5.52 2.78-10.15 6.86-13.9 12.25-4.47 6.46-6.71 13.54-6.71 21.25 0 7.18 1.81 13.06 5.43 17.64 4 5.04 9.34 7.56 16.01 7.56 4.49 0 9.06-1.16 13.7-3.49 3.41-1.72 6.16-3.77 8.26-6.15 2.14-2.45 3.21-4.99 3.21-7.63 0-1.62-.49-2.95-1.46-3.98-1.01-1.1-2.33-1.64-3.98-1.64-1.7 0-3.21.59-4.54 1.76-1.5 1.3-2.25 2.86-2.25 4.7zM199.73 203.43c0 3.24-1.1 6.24-3.27 8.99-2.04 2.63-4.62 4.5-7.72 5.61-2.4.86-4.54 1.28-6.42 1.28-1.3 0-2.33-.12-3.1-.36-1.13-.34-1.7-1.01-1.7-2.02 0-.77.53-1.6 1.6-2.46.96-.73 2.02-1.1 3.18-1.1.93 0 1.94.2 3.03.6 1.15.43 2.14.64 2.98.64 1.6 0 3.2-.63 4.8-1.9 1.77-1.42 2.65-3.09 2.65-5 0-2.09-1.02-3.9-3.05-5.43-1.74-1.3-3.78-1.95-6.14-1.95-2.6 0-5.31.69-8.16 2.06-4.32 2.07-8 5.03-11.04 8.9-3.52 4.38-5.28 9.22-5.28 14.52 0 4.99 1.47 8.83 4.42 11.51 3.12 2.87 7.33 4.3 12.64 4.3 3.45 0 7.05-.82 10.8-2.46 2.82-1.23 5.12-2.74 6.9-4.53 1.89-1.93 2.83-3.96 2.83-6.11 0-1.29-.46-2.34-1.38-3.16-.92-.81-2.05-1.22-3.41-1.22-1.5 0-2.87.53-4.11 1.6-1.32 1.14-1.98 2.49-1.98 4.05zM179.88 115.7c-7.32 0-13.49 2.86-18.5 8.59-4.94 5.54-7.42 12.1-7.42 19.66 0 7.07 2.5 12.89 7.5 17.46 5.13 4.66 11.5 6.99 19.1 6.99 7.78 0 14.14-2.87 19.07-8.61 4.9-5.72 7.35-12.57 7.35-20.55 0-6.98-2.54-12.67-7.62-17.07-5.12-4.44-11.37-6.62-18.58-6.62zm2.33 12.17c4.2 0 7.8 1.58 10.79 4.73 2.94 3.08 4.41 6.6 4.41 10.58 0 5.33-1.93 9.9-5.79 13.72-3.86 3.81-8.54 5.72-14.05 5.72-4.26 0-7.88-1.57-10.86-4.71-2.98-3.15-4.47-6.77-4.47-10.85 0-5.25 1.97-9.76 5.9-13.53 3.93-3.8 8.64-5.66 14.07-5.66zM126.45 151.31c0 3.56-1.28 6.68-3.83 9.36-2.51 2.63-5.55 3.95-9.12 3.95-2.62 0-4.86-.78-6.74-2.34-2.39-1.98-3.58-4.52-3.58-7.62 0-2.61.95-4.95 2.87-7.01 1.99-2.13 4.51-3.2 7.56-3.2 2.56 0 4.86.86 6.9 2.59 2.38 2.05 3.54 4.66 3.54 7.83z"/></g>
+    </symbol>
+
+    <!-- AirAsia (from your uploaded SVG) -->
+    <symbol id="logo-airasia" viewBox="0 0 300 300">
+      <path fill="#E32526" d="M295.312,150.305c0,80.078-64.913,145.001...,144.994-144.999C230.398,5.307,295.312,70.228,295.312,150.305"/>
+      <path fill="#FFFFFF" d="M109.494,121.304c3.279-0.593,5.716,1.4,5.471,4.431
+	c-0.245,3.027-3.111,5.985
+	..."/>
+    </symbol>
+  </svg>
+
+  <div class="wrap">
+    <h1>Switzerland → Italy → UAE → India</h1>
+    <div class="muted">For 2 travelers • Nov 20 – Dec 6, 2025</div>
+
+    <!-- Legend -->
+    <div class="legend" aria-label="Legend">
+      <span class="item">
+        <span class="tail" aria-hidden="true">
+          <svg class="logo" viewBox="-35.99655 -63.5 311.9701 381" preserveAspectRatio="xMidYMid meet"><use href="#logo-emirates"/></svg>
+          <span class="code label">EK</span>
+        </span> Emirates
+      </span>
+      <span class="item">
+        <span class="tail" aria-hidden="true">
+          <svg class="logo" viewBox="0 0 300 300" preserveAspectRatio="xMidYMid meet"><use href="#logo-airasia"/></svg>
+          <span class="code label">AK</span>
+        </span> AirAsia
+      </span>
+      <span class="item"><span class="tail" aria-hidden="true">
+        <svg class="logo" viewBox="0 0 24 14"><rect x="0" y="0" width="24" height="14" rx="2" fill="#D50000"/><line x1="4" y1="7" x2="20" y2="7" stroke="#fff" stroke-width="2"/><polyline points="14,4 17,7 14,10" fill="none" stroke="#fff" stroke-width="2"/><polyline points="10,4 7,7 10,10" fill="none" stroke="#fff" stroke-width="2"/></svg>
+        <span class="code label">SBB</span></span> Swiss Rail</span>
+      <span class="item"><span class="tail" aria-hidden="true">
+        <svg class="logo" viewBox="0 0 24 14"><rect x="0" y="0" width="24" height="14" rx="2" fill="#CF142B"/><rect x="2" y="6" width="20" height="2" fill="#fff"/></svg>
+        <span class="code label">RhB</span></span> Bernina route</span>
+      <span class="item"><span class="tail" aria-hidden="true">
+        <svg class="logo" viewBox="0 0 24 14"><rect x="0" y="0" width="24" height="14" rx="2" fill="#1D4ED8"/></svg>
+        <span class="code label">Trenord</span></span> Lombardy rail</span>
+    </div>
+
+    <!-- Positioning Flights -->
+    <section class="base" aria-label="Positioning flights">
+      <div class="base-head">
+        <div class="pin">
+          <svg class="ico" viewBox="0 0 24 24"><path d="M12 21s7-6.5 7-11a7 7 0 10-14 0c0 4.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+        </div>
+        <div>
+          <h2 class="base-title">Positioning Flights</h2>
+          <div class="base-sub">Before Switzerland</div>
+
+          <div class="note">
+            <span class="tail">
+              <svg class="logo" viewBox="0 0 300 300" preserveAspectRatio="xMidYMid meet"><use href="#logo-airasia"/></svg>
+              <span class="label">AK</span>
+            </span>
+            Thu, Nov 20 — SIN→KUL • AK718 • 20:15–21:20 • SIN T4 → KUL T2
+            <button class="info-btn" onclick="openInfo('FL-AK718-2025-11-20')" title="More info" aria-label="Flight AK718 info">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10v6M12 7h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+
+          <div class="note">
+            <span class="tail">
+              <svg class="logo" viewBox="-35.99655 -63.5 311.9701 381" preserveAspectRatio="xMidYMid meet"><use href="#logo-emirates"/></svg>
+              <span class="label">EK</span>
+            </span>
+            Fri, Nov 21 — KUL→DXB • EK343 • 01:25–04:45
+            <button class="info-btn" onclick="openInfo('FL-EK343-2025-11-21')" title="More info" aria-label="Flight EK343 info">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10v6M12 7h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+
+          <div class="note">
+            <span class="tail">
+              <svg class="logo" viewBox="-35.99655 -63.5 311.9701 381" preserveAspectRatio="xMidYMid meet"><use href="#logo-emirates"/></svg>
+              <span class="label">EK</span>
+            </span>
+            Fri, Nov 21 — DXB→ZRH • EK087 • 08:25–12:25 • Aircraft A380-800
+            <button class="info-btn" onclick="openInfo('FL-EK087-2025-11-21')" title="More info" aria-label="Flight EK087 info">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10v6M12 7h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="hr-dot"></div>
+      <div class="muted" style="font-size:12px">All times local.</div>
+    </section>
+    <div class="gutter" aria-hidden="true"></div>
+
+    <!-- Zürich -->
+    <section class="base" aria-label="Zürich">
+      <div class="base-head">
+        <div class="pin"><svg class="ico" viewBox="0 0 24 24"><path d="M12 21s7-6.5 7-11a7 7 0 10-14 0c0 4.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+        <div>
+          <h2 class="base-title">Zürich</h2>
+          <div class="base-sub">Stay: Nov 21–22</div>
+          <div class="note">
+            <span class="tail">
+              <svg class="logo" viewBox="-35.99655 -63.5 311.9701 381" preserveAspectRatio="xMidYMid meet"><use href="#logo-emirates"/></svg>
+              <span class="label">EK</span>
+            </span>
+            Arrive ZRH Fri, Nov 21
+            <button class="info-btn" onclick="openInfo('FL-EK087-2025-11-21')" title="More info" aria-label="Flight EK087 info">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10v6M12 7h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+          <div class="note">Sat, Nov 22: Day trip to Lucerne</div>
+        </div>
+      </div>
+
+      <div class="hr-dot"></div>
+
+      <article class="day">
+        <div class="bar" style="background:var(--accent-4)"></div>
+        <div class="day-head">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>
+          <span class="date">Fri, Nov 21</span>
+          <span class="extras">
+            <span class="pill">Zürich</span>
+            <span class="tail" title="Emirates">
+              <svg class="logo" viewBox="-35.99655 -63.5 311.9701 381" preserveAspectRatio="xMidYMid meet"><use href="#logo-emirates"/></svg>
+              <span class="label">EK</span>
+            </span>
+            <button class="info-btn" onclick="openInfo('FL-EK087-2025-11-21')" title="Flight EK087 details">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10v6M12 7h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </button>
+          </span>
+        </div>
+        <ul>
+          <li>Check-in & freshen up</li>
+          <li>Old Town → Bahnhofstrasse → Lindenhof</li>
+          <li>Lake Zürich promenade at sunset</li>
+          <li>Optional: Uetliberg (weather permitting)</li>
+        </ul>
+      </article>
+
+      <article class="day">
+        <div class="bar" style="background:var(--accent-12)"></div>
+        <div class="day-head">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>
+          <span class="date">Sat, Nov 22</span>
+          <span class="extras">
+            <span class="pill">Lucerne</span>
+            <span class="tail" title="Swiss Rail">
+              <svg class="logo" viewBox="0 0 24 14"><rect width="24" height="14" rx="2" fill="#D50000"/><line x1="4" y1="7" x2="20" y2="7" stroke="#fff" stroke-width="2"/><polyline points="14,4 17,7 14,10" fill="none" stroke="#fff" stroke-width="2"/><polyline points="10,4 7,7 10,10" fill="none" stroke="#fff" stroke-width="2"/></svg>
+              <span class="label">SBB</span>
+            </span>
+            <button class="info-btn" onclick="openInfo('RAIL-SBB-ZH-LUZ-2025-11-22')" title="SBB details">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10v6M12 7h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </button>
+          </span>
+        </div>
+        <ul>
+          <li>Zürich HB → Luzern (45–55 min)</li>
+          <li>Chapel Bridge, Old Town murals, Lion Monument</li>
+          <li>Optional: 1-hr lake cruise or Pilatus (weather)</li>
+          <li>Return to Zürich by evening</li>
+        </ul>
+      </article>
+    </section>
+    <div class="gutter" aria-hidden="true"></div>
+
+    <!-- Interlaken -->
+    <section class="base" aria-label="Interlaken">
+      <div class="base-head">
+        <div class="pin"><svg class="ico" viewBox="0 0 24 24"><path d="M12 21s7-6.5 7-11a7 7 0 10-14 0c0 4.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+        <div>
+          <h2 class="base-title">Interlaken</h2>
+          <div class="base-sub">Stay: Nov 23–26 (checkout morning 26)</div>
+          <div class="note"><span class="tail">
+            <svg class="logo" viewBox="0 0 24 14"><rect width="24" height="14" rx="2" fill="#D50000"/><line x1="4" y1="7" x2="20" y2="7" stroke="#fff" stroke-width="2"/><polyline points="14,4 17,7 14,10" fill="none" stroke="#fff" stroke-width="2"/><polyline points="10,4 7,7 10,10" fill="none" stroke="#fff" stroke-width="2"/></svg>
+            <span class="label">SBB</span></span> Zürich HB → Interlaken Ost (~2h via Bern)
+            <button class="info-btn" onclick="openInfo('RAIL-SBB-ZH-INT-2025-11-23')" title="SBB details">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10v6M12 7h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="hr-dot"></div>
+
+      <article class="day">
+        <div class="bar" style="background:var(--accent-2)"></div>
+        <div class="day-head">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>
+          <span class="date">Sun, Nov 23</span>
+          <span class="extras">
+            <span class="pill">Interlaken</span>
+            <span class="tail" title="Swiss Rail">
+              <svg class="logo" viewBox="0 0 24 14"><rect width="24" height="14" rx="2" fill="#D50000"/><line x1="4" y1="7" x2="20" y2="7" stroke="#fff" stroke-width="2"/><polyline points="14,4 17,7 14,10" fill="none" stroke="#fff" stroke-width="2"/><polyline points="10,4 7,7 10,10" fill="none" stroke="#fff" stroke-width="2"/></svg>
+              <span class="label">SBB</span>
+            </span>
+            <button class="info-btn" onclick="openInfo('RAIL-SBB-ZH-INT-2025-11-23')" title="SBB details">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10v6M12 7h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </button>
+          </span>
+        </div>
+        <ul>
+          <li>Transfer & hotel check-in</li>
+          <li>Höhematte Park, Unterseen lanes; lakeside stroll</li>
+          <li>Optional: Harder Kulm for sunset</li>
+        </ul>
+      </article>
+
+      <article class="day">
+        <div class="bar" style="background:var(--accent-12)"></div>
+        <div class="day-head">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>
+          <span class="date">Mon, Nov 24</span>
+          <span class="extras">
+            <span class="pill">Grindelwald</span>
+            <span class="tail" title="Swiss Rail">
+              <svg class="logo" viewBox="0 0 24 14"><rect width="24" height="14" rx="2" fill="#D50000"/><line x1="4" y1="7" x2="20" y2="7" stroke="#fff" stroke-width="2"/><polyline points="14,4 17,7 14,10" fill="none" stroke="#fff" stroke-width="2"/><polyline points="10,4 7,7 10,10" fill="none" stroke="#fff" stroke-width="2"/></svg>
+              <span class="label">SBB</span>
+            </span>
+            <button class="info-btn" onclick="openInfo('RAIL-SBB-INT-GRI-2025-11-24')" title="SBB details">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10v6M12 7h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </button>
+          </span>
+        </div>
+        <ul>
+          <li>Interlaken Ost → Grindelwald (35–40 min)</li>
+          <li>First cable car → Cliff Walk; easy hikes (Bachalpsee if open) OR</li>
+          <li>Eiger Express → Eigergletscher views</li>
+        </ul>
+      </article>
+
+      <article class="day">
+        <div class="bar" style="background:var(--accent-3)"></div>
+        <div class="day-head">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>
+          <span class="date">Tue, Nov 25</span>
+          <span class="extras">
+            <span class="pill">Jungfrau</span>
+            <span class="tail" title="Swiss Rail">
+              <svg class="logo" viewBox="0 0 24 14"><rect width="24" height="14" rx="2" fill="#D50000"/><line x1="4" y1="7" x2="20" y2="7" stroke="#fff" stroke-width="2"/><polyline points="14,4 17,7 14,10" fill="none" stroke="#fff" stroke-width="2"/><polyline points="10,4 7,7 10,10" fill="none" stroke="#fff" stroke-width="2"/></svg>
+              <span class="label">SBB</span>
+            </span>
+            <button class="info-btn" onclick="openInfo('RAIL-SBB-INT-JUN-2025-11-25')" title="SBB details">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10v6M12 7h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </button>
+          </span>
+        </div>
+        <ul>
+          <li>Fast route: Interlaken Ost → Grindelwald Terminal → Eiger Express → Jungfraujoch</li>
+          <li>Sphinx Observatory, Ice Palace, Plateau walk</li>
+        </ul>
+      </article>
+
+      <article class="day">
+        <div class="bar" style="background:var(--accent-6)"></div>
+        <div class="day-head">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>
+          <span class="date">Wed, Nov 26</span>
+          <span class="extras">
+            <span class="pill">Chur</span>
+            <span class="tail" title="Swiss Rail">
+              <svg class="logo" viewBox="0 0 24 14"><rect width="24" height="14" rx="2" fill="#D50000"/><line x1="4" y1="7" x2="20" y2="7" stroke="#fff" stroke-width="2"/><polyline points="14,4 17,7 14,10" fill="none" stroke="#fff" stroke-width="2"/><polyline points="10,4 7,7 10,10" fill="none" stroke="#fff" stroke-width="2"/></svg>
+              <span class="label">SBB</span>
+            </span>
+            <button class="info-btn" onclick="openInfo('RAIL-SBB-INT-CHU-2025-11-26')" title="SBB details">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10v6M12 7h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </button>
+          </span>
+        </div>
+        <ul>
+          <li>Checkout; Interlaken → Zürich HB → Chur (~3–3.5h)</li>
+          <li>Light Old Town walk; prep for Bernina Express</li>
+        </ul>
+      </article>
+    </section>
+    <div class="gutter" aria-hidden="true"></div>
+
+    <!-- Chur / Bernina -->
+    <section class="base" aria-label="Chur">
+      <div class="base-head">
+        <div class="pin"><svg class="ico" viewBox="0 0 24 24"><path d="M12 21s7-6.5 7-11a7 7 0 10-14 0c0 4.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+        <div>
+          <h2 class="base-title">Chur</h2>
+          <div class="base-sub">Stay: Nov 26 (1 night)</div>
+          <div class="note"><span class="tail">
+            <svg class="logo" viewBox="0 0 24 14"><rect width="24" height="14" rx="2" fill="#CF142B"/><rect x="2" y="6" width="20" height="2" fill="#fff"/></svg>
+            <span class="label">RhB</span></span>
+            Thu, Nov 27 • Bernina route ticket valid; Chur → Tirano
+            <button class="info-btn" onclick="openInfo('RAIL-RHB-CHU-TIR-2025-11-27')" title="RhB Bernina details">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10v6M12 7h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="hr-dot"></div>
+
+      <article class="day">
+        <div class="bar" style="background:var(--accent-8)"></div>
+        <div class="day-head">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>
+          <span class="date">Thu, Nov 27</span>
+          <span class="extras">
+            <span class="pill">Bernina/Tirano</span>
+            <span class="tail" title="Rhätische Bahn">
+              <svg class="logo" viewBox="0 0 24 14"><rect width="24" height="14" rx="2" fill="#CF142B"/><rect x="2" y="6" width="20" height="2" fill="#fff"/></svg>
+              <span class="label">RhB</span>
+            </span>
+            <button class="info-btn" onclick="openInfo('RAIL-RHB-CHU-TIR-2025-11-27')" title="RhB Bernina details">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10v6M12 7h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </button>
+          </span>
+        </div>
+        <ul>
+          <li>Chur → Tirano on Bernina route (scenic)</li>
+          <li>Tirano → Milano Centrale (~2h30, regional)</li>
+          <li>Check-in Milan; Duomo by night</li>
+        </ul>
+      </article>
+    </section>
+    <div class="gutter" aria-hidden="true"></div>
+
+    <!-- Milan -->
+    <section class="base" aria-label="Milan">
+      <div class="base-head">
+        <div class="pin"><svg class="ico" viewBox="0 0 24 24"><path d="M12 21s7-6.5 7-11a7 7 0 10-14 0c0 4.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+        <div>
+          <h2 class="base-title">Milan</h2>
+          <div class="base-sub">Stay: Nov 27–30</div>
+          <div class="note"><span class="tail">
+            <svg class="logo" viewBox="-35.99655 -63.5 311.9701 381" preserveAspectRatio="xMidYMid meet"><use href="#logo-emirates"/></svg>
+            <span class="label">EK</span></span>
+            Sun, Nov 30 • EK102 MXP→DXB 10:25–19:20
+            <button class="info-btn" onclick="openInfo('FL-EK102-2025-11-30')" title="Emirates EK102 details">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10v6M12 7h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="hr-dot"></div>
+
+      <article class="day">
+        <div class="bar" style="background:var(--accent-4)"></div>
+        <div class="day-head">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>
+          <span class="date">Fri, Nov 28</span>
+          <span class="extras"><span class="pill">Milan</span></span>
+        </div>
+        <ul>
+          <li>Duomo terraces, Galleria Vittorio Emanuele II</li>
+          <li>Brera & Pinacoteca</li>
+          <li>Castello Sforzesco & Parco Sempione</li>
+        </ul>
+      </article>
+
+      <article class="day">
+        <div class="bar" style="background:var(--accent-5)"></div>
+        <div class="day-head">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>
+          <span class="date">Sat, Nov 29</span>
+          <span class="extras">
+            <span class="pill">Lake Como</span>
+            <span class="tail" title="Trenord">
+              <svg class="logo" viewBox="0 0 24 14"><rect width="24" height="14" rx="2" fill="#1D4ED8"/></svg>
+              <span class="label">Trenord</span>
+            </span>
+            <button class="info-btn" onclick="openInfo('RAIL-TRENORD-MIL-COMO-2025-11-29')" title="Trenord details">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10v6M12 7h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </button>
+          </span>
+        </div>
+        <ul>
+          <li>Day trip: Varenna/Bellagio OR Navigli canals + aperitivo</li>
+          <li>Outlet shopping optional</li>
+        </ul>
+      </article>
+
+      <article class="day">
+        <div class="bar" style="background:var(--accent-6)"></div>
+        <div class="day-head">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>
+          <span class="date">Sun, Nov 30</span>
+          <span class="extras">
+            <span class="pill">Travel</span>
+            <span class="tail" title="Emirates">
+              <svg class="logo" viewBox="-35.99655 -63.5 311.9701 381" preserveAspectRatio="xMidYMid meet"><use href="#logo-emirates"/></svg>
+              <span class="label">EK</span>
+            </span>
+            <button class="info-btn" onclick="openInfo('FL-EK102-2025-11-30')" title="Emirates EK102 details">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10v6M12 7h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </button>
+          </span>
+        </div>
+        <ul>
+          <li>MXP → DXB (EK102) 10:25–19:20</li>
+          <li>Evening arrival Dubai</li>
+        </ul>
+      </article>
+    </section>
+    <div class="gutter" aria-hidden="true"></div>
+
+    <!-- Dubai -->
+    <section class="base" aria-label="Dubai">
+      <div class="base-head">
+        <div class="pin"><svg class="ico" viewBox="0 0 24 24"><path d="M12 21s7-6.5 7-11a7 7 0 10-14 0c0 4.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+        <div>
+          <h2 class="base-title">Dubai</h2>
+          <div class="base-sub">Stay: Nov 30–Dec 3</div>
+          <div class="note"><span class="tail">
+            <svg class="logo" viewBox="-35.99655 -63.5 311.9701 381" preserveAspectRatio="xMidYMid meet"><use href="#logo-emirates"/></svg>
+            <span class="label">EK</span></span>
+            Wed, Dec 3 • EK530 DXB→COK 02:45–08:05 • Aircraft 777-300ER
+            <button class="info-btn" onclick="openInfo('FL-EK530-2025-12-03')" title="Emirates EK530 details">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10v6M12 7h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="hr-dot"></div>
+
+      <article class="day">
+        <div class="bar" style="background:var(--accent-7)"></div>
+        <div class="day-head">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>
+          <span class="date">Sun, Nov 30 (evening)</span>
+          <span class="extras"><span class="pill">Downtown</span></span>
+        </div>
+        <ul>
+          <li>Check-in; Dubai Mall fountains; Burj Khalifa (late slot)</li>
+        </ul>
+      </article>
+
+      <article class="day">
+        <div class="bar" style="background:var(--accent-3)"></div>
+        <div class="day-head">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>
+          <span class="date">Mon, Dec 1</span>
+          <span class="extras"><span class="pill">Old Dubai</span></span>
+        </div>
+        <ul>
+          <li>Al Fahidi → Abra → Gold & Spice Souks</li>
+          <li>Late-afternoon desert safari</li>
+        </ul>
+      </article>
+
+      <article class="day">
+        <div class="bar" style="background:var(--accent-2)"></div>
+        <div class="day-head">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>
+          <span class="date">Tue, Dec 2</span>
+          <span class="extras"><span class="pill">Palm/Marina</span></span>
+        </div>
+        <ul>
+          <li>Atlantis & The Pointe views</li>
+          <li>Dubai Marina Walk</li>
+          <li>Pack for overnight flight</li>
+        </ul>
+      </article>
+
+      <article class="day">
+        <div class="bar" style="background:var(--accent-11)"></div>
+        <div class="day-head">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>
+          <span class="date">Wed, Dec 3 (early)</span>
+          <span class="extras">
+            <span class="pill">Travel</span>
+            <span class="tail" title="Emirates">
+              <svg class="logo" viewBox="-35.99655 -63.5 311.9701 381" preserveAspectRatio="xMidYMid meet"><use href="#logo-emirates"/></svg>
+              <span class="label">EK</span>
+            </span>
+            <button class="info-btn" onclick="openInfo('FL-EK530-2025-12-03')" title="Emirates EK530 details">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10v6M12 7h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </button>
+          </span>
+        </div>
+        <ul>
+          <li>DXB → COK (EK530) 02:45–08:05</li>
+        </ul>
+      </article>
+    </section>
+    <div class="gutter" aria-hidden="true"></div>
+
+    <!-- Kochi -->
+    <section class="base" aria-label="Kochi">
+      <div class="base-head">
+        <div class="pin"><svg class="ico" viewBox="0 0 24 24"><path d="M12 21s7-6.5 7-11a7 7 0 10-14 0c0 4.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+        <div>
+          <h2 class="base-title">Kochi</h2>
+          <div class="base-sub">Stay: Dec 3–6 • Hotel: Ramada Kochi (booked)</div>
+          <div class="note">Sat, Dec 6 • COK→SIN (to book)</div>
+        </div>
+      </div>
+
+      <div class="hr-dot"></div>
+
+      <article class="day">
+        <div class="bar" style="background:#64748b"></div>
+        <div class="day-head">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>
+          <span class="date">Wed, Dec 3</span>
+          <span class="extras"><span class="pill">Kochi</span></span>
+        </div>
+        <ul>
+          <li>Unwind; Marine Drive stroll</li>
+        </ul>
+      </article>
+
+      <article class="day">
+        <div class="bar" style="background:var(--accent-9)"></div>
+        <div class="day-head">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>
+          <span class="date">Thu, Dec 4</span>
+          <span class="extras"><span class="pill">Fort Kochi</span></span>
+        </div>
+        <ul>
+          <li>Chinese nets, St. Francis, Dutch Cemetery</li>
+          <li>Mattancherry Palace & Synagogue</li>
+          <li>Evening Kathakali show</li>
+        </ul>
+      </article>
+
+      <article class="day">
+        <div class="bar" style="background:var(--accent-10)"></div>
+        <div class="day-head">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>
+          <span class="date">Fri, Dec 5</span>
+          <span class="extras"><span class="pill">Backwaters</span></span>
+        </div>
+        <ul>
+          <li>Alleppey shikara/houseboat (4–6h)</li>
+          <li>Pack for next day</li>
+        </ul>
+      </article>
+
+      <article class="day">
+        <div class="bar" style="background:#26a69a"></div>
+        <div class="day-head">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>
+          <span class="date">Sat, Dec 6</span>
+          <span class="extras"><span class="pill">Travel</span></span>
+        </div>
+        <ul>
+          <li>COK → SIN flight (to book)</li>
+        </ul>
+      </article>
+    </section>
+
+    <div style="height:24px"></div>
+  </div>
+
+  <!-- Info Modal -->
+  <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" onclick="backdropClose(event)">
+    <div class="sheet" role="document">
+      <h3 id="modal-title">Transport details</h3>
+      <div id="modal-body"></div>
+      <div class="close"><button class="btn" onclick="closeInfo()">Close</button></div>
+    </div>
+  </div>
+
+  <script>
+    // Transport details compiled from your uploaded tickets.
+    // Where info wasn't provided, we show "Details to be uploaded".
+    const TRANSPORT = {
+      "FL-AK718-2025-11-20": {
+        type: "Flight", number: "AK718", carrier: "AirAsia",
+        date: "Thu, Nov 20, 2025", origin: "Singapore (SIN • T4)", departure: "20:15",
+        destination: "Kuala Lumpur (KUL • T2)", arrival: "21:20",
+        pnr: "Details to be uploaded", duration: "≈1h05m", price: "Details to be uploaded", qr: "Details to be uploaded"
+      },
+      "FL-EK343-2025-11-21": {
+        type: "Flight", number: "EK343", carrier: "Emirates",
+        date: "Fri, Nov 21, 2025", origin: "Kuala Lumpur (KUL)", departure: "01:25",
+        destination: "Dubai (DXB)", arrival: "04:45",
+        pnr: "Details to be uploaded", aircraft: "—", price: "Details to be uploaded", qr: "Details to be uploaded"
+      },
+      "FL-EK087-2025-11-21": {
+        type: "Flight", number: "EK087", carrier: "Emirates",
+        date: "Fri, Nov 21, 2025", origin: "Dubai (DXB)", departure: "08:25",
+        destination: "Zürich (ZRH)", arrival: "12:25",
+        aircraft: "Airbus A380-800", pnr: "Details to be uploaded", price: "Details to be uploaded", qr: "Details to be uploaded"
+      },
+      "FL-EK102-2025-11-30": {
+        type: "Flight", number: "EK102", carrier: "Emirates",
+        date: "Sun, Nov 30, 2025", origin: "Milan (MXP)", departure: "10:25",
+        destination: "Dubai (DXB)", arrival: "19:20", duration: "≈5h55m",
+        pnr: "GZP7JS", price: "Details to be uploaded", qr: "Details to be uploaded"
+      },
+      "FL-EK530-2025-12-03": {
+        type: "Flight", number: "EK530", carrier: "Emirates",
+        date: "Wed, Dec 3, 2025", origin: "Dubai (DXB)", departure: "02:45",
+        destination: "Kochi (COK)", arrival: "08:05",
+        aircraft: "Boeing 777-300ER", class: "Business / Special",
+        pnr: "Details to be uploaded", price: "Details to be uploaded", qr: "Details to be uploaded"
+      },
+
+      "RAIL-SBB-ZH-LUZ-2025-11-22": {
+        type: "Train", number: "SBB (multiple departures)",
+        date: "Sat, Nov 22, 2025", origin: "Zürich HB", departure: "Every 15–30 min (≈45–55m)",
+        destination: "Luzern", arrival: "—",
+        pnr: "Details to be uploaded", price: "Details to be uploaded", qr: "Details to be uploaded"
+      },
+      "RAIL-SBB-ZH-INT-2025-11-23": {
+        type: "Train", number: "SBB (via Bern)",
+        date: "Sun, Nov 23, 2025", origin: "Zürich HB", departure: "—",
+        destination: "Interlaken Ost", arrival: "≈2h",
+        pnr: "Details to be uploaded", price: "Details to be uploaded", qr: "Details to be uploaded"
+      },
+      "RAIL-SBB-INT-GRI-2025-11-24": {
+        type: "Train", number: "SBB",
+        date: "Mon, Nov 24, 2025", origin: "Interlaken Ost", departure: "—",
+        destination: "Grindelwald", arrival: "35–40 min",
+        pnr: "Details to be uploaded", price: "Details to be uploaded", qr: "Details to be uploaded"
+      },
+      "RAIL-SBB-INT-JUN-2025-11-25": {
+        type: "Train + Cableway", number: "SBB + Eiger Express",
+        date: "Tue, Nov 25, 2025", origin: "Interlaken Ost / Grindelwald Terminal", departure: "—",
+        destination: "Jungfraujoch", arrival: "—",
+        pnr: "Details to be uploaded", price: "Details to be uploaded", qr: "Details to be uploaded"
+      },
+      "RAIL-SBB-INT-CHU-2025-11-26": {
+        type: "Train", number: "SBB",
+        date: "Wed, Nov 26, 2025", origin: "Interlaken Ost", departure: "—",
+        destination: "Chur (via Zürich HB)", arrival: "≈3–3.5h",
+        pnr: "Details to be uploaded", price: "Details to be uploaded", qr: "Details to be uploaded"
+      },
+      "RAIL-RHB-CHU-TIR-2025-11-27": {
+        type: "Train", number: "Bernina (RhB)",
+        date: "Thu, Nov 27, 2025", origin: "Chur", departure: "—",
+        destination: "Tirano", arrival: "—",
+        orderNo: "1513000564548", ticketType: "Reduced fare 1/2",
+        price: "CHF 33.00 (per person)", pnr: "—", qr: "Present on ticket image (not embedded)"
+      },
+      "RAIL-TRENORD-MIL-COMO-2025-11-29": {
+        type: "Train", number: "Trenord (various)",
+        date: "Sat, Nov 29, 2025", origin: "Milano", departure: "—",
+        destination: "Lake Como (Varenna/Como)", arrival: "—",
+        pnr: "Details to be uploaded", price: "Details to be uploaded", qr: "Details to be uploaded"
+      }
+    };
+
+    function openInfo(id){
+      const m = document.getElementById('modal');
+      const body = document.getElementById('modal-body');
+      const d = TRANSPORT[id] || { type:"Transport", note:"Details to be uploaded" };
+
+      const rows = [];
+      function add(label, value){
+        if(value === undefined) return;
+        rows.push(`<div class="row"><span class="label">${label}</span><span>${value || "Details to be uploaded"}</span></div>`);
+      }
+      body.innerHTML = `
+        <div class="grid">
+          <div>${(() => { add("Type", d.type); add("Number", d.number); add("Carrier", d.carrier); add("Ticket Type", d.ticketType); return ""; })()}</div>
+          <div>${(() => { add("Date", d.date); add("PNR / Confirmation", d.pnr || "Details to be uploaded"); add("Order No.", d.orderNo); return ""; })()}</div>
+        </div>
+        <div class="hr-dot" style="border-top:1px dotted var(--line);margin:10px 0"></div>
+        ${(() => { rows.length=0; add("Origin", d.origin); add("Departure", d.departure); add("Destination", d.destination); add("Arrival", d.arrival); add("Duration", d.duration); add("Aircraft", d.aircraft); add("Price", d.price); add("QR Code", d.qr || "Details to be uploaded"); return rows.join(""); })()}
+      `;
+      m.setAttribute('open','');
+      setTimeout(() => document.querySelector('#modal .btn').focus(), 0);
+    }
+    function closeInfo(){ document.getElementById('modal').removeAttribute('open'); }
+    function backdropClose(e){ if(e.target.id === 'modal') closeInfo(); }
+  </script>
+</body>
+</html>
