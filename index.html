@@ -650,6 +650,9 @@
   <script>
     // Transport details compiled from your uploaded tickets.
     // Where info wasn't provided, we show "Details to be uploaded".
+    let originalModalContent = '';
+    let currentTransportId = '';
+    
     const TRANSPORT = {
       "FL-AK718-2025-11-20": {
         type: "Flight", number: "AK718", carrier: "AirAsia",
@@ -732,23 +735,37 @@
 
     function openInfo(id){
       const m = document.getElementById('modal');
+      const sheet = m.querySelector('.sheet');
       const body = document.getElementById('modal-body');
       const d = TRANSPORT[id] || { type:"Transport", note:"Details to be uploaded" };
+
+      // Store current transport ID and reset PDF mode
+      currentTransportId = id;
+      sheet.classList.remove('pdf-mode');
 
       const rows = [];
       function add(label, value){
         if(value === undefined) return;
         rows.push(`<div class="row"><span class="label">${label}</span><span>${value || "Details to be uploaded"}</span></div>`);
       }
-      body.innerHTML = `
-        <div class="grid">
-          <div>${(() => { add("Type", d.type); add("Number", d.number); add("Carrier", d.carrier); add("Ticket Type", d.ticketType); return ""; })()}</div>
-          <div>${(() => { add("Date", d.date); add("PNR / Confirmation", d.pnr || "Details to be uploaded"); add("Order No.", d.orderNo); return ""; })()}</div>
+      
+      const modalContent = `
+        <h3 id="modal-title">Transport details</h3>
+        <div id="modal-body">
+          <div class="grid">
+            <div>${(() => { add("Type", d.type); add("Number", d.number); add("Carrier", d.carrier); add("Ticket Type", d.ticketType); return ""; })()}</div>
+            <div>${(() => { add("Date", d.date); add("PNR / Confirmation", d.pnr || "Details to be uploaded"); add("Order No.", d.orderNo); return ""; })()}</div>
+          </div>
+          <div class="hr-dot" style="border-top:1px dotted var(--line);margin:10px 0"></div>
+          ${(() => { rows.length=0; add("Origin", d.origin); add("Departure", d.departure); add("Destination", d.destination); add("Arrival", d.arrival); add("Duration", d.duration); add("Aircraft", d.aircraft); add("Price", d.price); add("Passengers", d.passengers); return rows.join(""); })()}
+          ${d.pdf ? `<div style="margin-top:12px;text-align:center"><button onclick="viewPDF('${d.pdf}', '${d.carrier} ${d.number}')" class="btn" style="background:#E32526;color:white;border:none">📄 View Ticket</button></div>` : ''}
         </div>
-        <div class="hr-dot" style="border-top:1px dotted var(--line);margin:10px 0"></div>
-        ${(() => { rows.length=0; add("Origin", d.origin); add("Departure", d.departure); add("Destination", d.destination); add("Arrival", d.arrival); add("Duration", d.duration); add("Aircraft", d.aircraft); add("Price", d.price); add("Passengers", d.passengers); return rows.join(""); })()}
-        ${d.pdf ? `<div style="margin-top:12px;text-align:center"><button onclick="viewPDF('${d.pdf}', '${d.carrier} ${d.number}')" class="btn" style="background:#E32526;color:white;border:none">📄 View Ticket</button></div>` : ''}
+        <div class="close"><button class="btn" onclick="closeInfo()">Close</button></div>
       `;
+      
+      // Store original content and display it
+      originalModalContent = modalContent;
+      sheet.innerHTML = modalContent;
       m.setAttribute('open','');
       setTimeout(() => document.querySelector('#modal .btn').focus(), 0);
     }
@@ -763,7 +780,7 @@
       sheet.innerHTML = `
         <h3 id="modal-title">${title} - Ticket</h3>
         <div class="pdf-controls">
-          <button class="btn" onclick="closeInfo()">← Back to Details</button>
+          <button class="btn" onclick="backToDetails()">← Back to Details</button>
           <button class="btn" onclick="window.open('${pdfUrl}', '_blank')">↗ Open in New Tab</button>
         </div>
         <div class="pdf-viewer" style="display:flex;align-items:center;justify-content:center;color:#666">
@@ -797,6 +814,15 @@
           </iframe>
         `;
       }
+    }
+    
+    function backToDetails() {
+      const modal = document.getElementById('modal');
+      const sheet = modal.querySelector('.sheet');
+      
+      // Restore original modal content
+      sheet.classList.remove('pdf-mode');
+      sheet.innerHTML = originalModalContent;
     }
     
     function closeInfo(){ 
