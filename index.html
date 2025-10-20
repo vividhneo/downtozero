@@ -174,10 +174,22 @@
               <span class="label">EK</span>
             </span>
             Arrive ZRH Fri, Nov 21
-            <button class="info-btn" onclick="openInfo('FL-EK087-2025-11-21')" title="More info" aria-label="Flight EK087 info">
+            <button class="info-btn" onclick="openInfo('FL-EK343-2025-11-21')" title="More info" aria-label="KUL→ZRH flight details">
               <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10v6M12 7h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
             </button>
           </div>
+          
+          <div class="note">
+            <span class="tail">
+              <svg class="logo" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2" fill="#2563EB"/><path d="M8 10h8M6 14h12" stroke="white" stroke-width="1.5"/></svg>
+              <span class="label">Hotel</span>
+            </span>
+            aCasa Zürich (Nov 21-22)
+            <button class="info-btn" onclick="openInfo('HOTEL-ZRH-ACASA-2025-11-21')" title="More info" aria-label="Hotel booking details">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10v6M12 7h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+          
           <div class="note">Sat, Nov 22: Day trip to Lucerne</div>
         </div>
       </div>
@@ -195,7 +207,7 @@
               <svg class="logo" viewBox="0 0 24 24"><use href="#logo-emirates"/></svg>
               <span class="label">EK</span>
             </span>
-            <button class="info-btn" onclick="openInfo('FL-EK087-2025-11-21')" title="Flight EK087 details">
+            <button class="info-btn" onclick="openInfo('FL-EK343-2025-11-21')" title="KUL→ZRH flight details">
               <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10v6M12 7h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
             </button>
           </span>
@@ -717,6 +729,17 @@
         date: "Sat, Nov 29, 2025", origin: "Milano", departure: "—",
         destination: "Lake Como (Varenna/Como)", arrival: "—",
         pnr: "Details to be uploaded", price: "Details to be uploaded", qr: "Details to be uploaded"
+      },
+      
+      "HOTEL-ZRH-ACASA-2025-11-21": {
+        type: "Hotel", number: "aCasa Zürich", carrier: "aCasa Hotels",
+        date: "Nov 21-22, 2025", origin: "Check-in: Nov 21", departure: "—",
+        destination: "Check-out: Nov 22", arrival: "—",
+        address: "Schweizergasse 9, 8001 Zürich, Switzerland",
+        guests: "Vividh Sharma, Amrita Chatterjee",
+        nights: "1 night", roomType: "Details in booking",
+        pdf: "https://github.com/vividhneo/downtozero/raw/main/zrh-acasa.pdf",
+        pnr: "Details in booking"
       }
     };
 
@@ -744,7 +767,27 @@
             <div>${(() => { add("Date", d.date); add("PNR / Confirmation", d.pnr || "Details to be uploaded"); add("Order No.", d.orderNo); return ""; })()}</div>
           </div>
           <div class="hr-dot" style="border-top:1px dotted var(--line);margin:10px 0"></div>
-          ${(() => { rows.length=0; add("Origin", d.origin); add("Departure", d.departure); add("Destination", d.destination); add("Arrival", d.arrival); add("Duration", d.duration); add("Aircraft", d.aircraft); add("Price", d.price); add("Route", d.route); return rows.join(""); })()}
+          ${(() => { 
+            rows.length=0; 
+            if (d.type === "Hotel") {
+              add("Address", d.address);
+              add("Check-in", d.origin);
+              add("Check-out", d.destination);
+              add("Nights", d.nights);
+              add("Room Type", d.roomType);
+              add("Guests", d.guests);
+            } else {
+              add("Origin", d.origin);
+              add("Departure", d.departure);
+              add("Destination", d.destination);
+              add("Arrival", d.arrival);
+              add("Duration", d.duration);
+              add("Aircraft", d.aircraft);
+              add("Price", d.price);
+              add("Route", d.route);
+            }
+            return rows.join(""); 
+          })()}
           ${d.passengers && Array.isArray(d.passengers) ? 
             `<div style="margin-top:12px">
               <div style="font-weight:600;margin-bottom:8px;color:#374151">Passengers & Tickets:</div>
@@ -755,8 +798,8 @@
                 </div>
               `).join('')}
             </div>` 
-            : d.passengers ? `${(() => { add("Passengers", d.passengers); return ""; })()}${d.pdf ? `<div style="margin-top:12px;text-align:center"><button onclick="viewPDF('${d.pdf}', '${d.carrier} ${d.number}')" class="btn" style="background:#E32526;color:white;border:none">📄 View Ticket</button></div>` : ''}` 
-            : ''
+            : d.passengers ? `${(() => { add("Passengers", d.passengers); return ""; })()}${d.pdf ? `<div style="margin-top:12px;text-align:center"><button onclick="viewPDF('${d.pdf}', '${d.carrier || d.type} ${d.number}')" class="btn" style="background:${d.type === 'Hotel' ? '#2563EB' : '#E32526'};color:white;border:none">${d.type === 'Hotel' ? '🏨 View Booking' : '📄 View Ticket'}</button></div>` : ''}` 
+            : d.pdf ? `<div style="margin-top:12px;text-align:center"><button onclick="viewPDF('${d.pdf}', '${d.carrier || d.type} ${d.number}')" class="btn" style="background:${d.type === 'Hotel' ? '#2563EB' : '#E32526'};color:white;border:none">${d.type === 'Hotel' ? '🏨 View Booking' : '📄 View Ticket'}</button></div>` : ''
           }
         </div>
         <div class="close"><button class="btn" onclick="closeInfo()">Close</button></div>
