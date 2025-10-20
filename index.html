@@ -137,22 +137,27 @@
         </div>
         <div>
           <h2 class="base-title">Take Off</h2>
-          <div class="base-sub">Singapore → Kuala Lumpur → Dubai → Zürich</div>
+          <div class="base-sub">Before Switzerland</div>
 
-          <div class="note">
+          <div class="note clickable-row" onclick="openInfo('FL-AK718-2025-11-20')" style="cursor:pointer;padding:8px;margin:4px -8px;border-radius:8px;transition:background 0.2s" onmouseover="this.style.background='#f8f9fa'" onmouseout="this.style.background='transparent'">
             <span class="tail">
-              <svg class="logo" viewBox="0 0 24 24" style="width:14px;height:14px"><circle cx="12" cy="12" r="10" fill="#E32526"/><path d="M8 12h8M12 8l4 4-4 4" stroke="white" stroke-width="2" fill="none"/></svg>
-              <span class="label">AK + EK</span>
+              <svg class="logo" viewBox="0 0 24 24"><use href="#logo-airasia"/></svg>
+              <span class="label">AK</span>
             </span>
-            Nov 20-21 • 3 connecting flights
-            <button class="info-btn" onclick="openInfo('FL-AK718-2025-11-20')" title="More info" aria-label="Flight details">
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10v6M12 7h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-            </button>
+            Singapore to Kuala Lumpur • Nov 20
+          </div>
+
+          <div class="note clickable-row" onclick="openInfo('FL-EK343-2025-11-21')" style="cursor:pointer;padding:8px;margin:4px -8px;border-radius:8px;transition:background 0.2s" onmouseover="this.style.background='#f8f9fa'" onmouseout="this.style.background='transparent'">
+            <span class="tail">
+              <svg class="logo" viewBox="0 0 24 24"><use href="#logo-emirates"/></svg>
+              <span class="label">EK</span>
+            </span>
+            Kuala Lumpur to Zürich • Nov 21
           </div>
         </div>
       </div>
       <div class="hr-dot"></div>
-      <div class="muted" style="font-size:12px">All times local. Tap info for flight details.</div>
+      <div class="muted" style="font-size:12px">All times local. Tap rows for flight details.</div>
     </section>
     <div class="gutter" aria-hidden="true"></div>
 
@@ -640,10 +645,15 @@
         pdf: "https://github.com/vividhneo/downtozero/raw/main/sg-kl-flight.pdf"
       },
       "FL-EK343-2025-11-21": {
-        type: "Flight", number: "EK343", carrier: "Emirates",
+        type: "Flight Segment", number: "EK343 + EK087", carrier: "Emirates",
         date: "Fri, Nov 21, 2025", origin: "Kuala Lumpur (KUL)", departure: "01:25",
-        destination: "Dubai (DXB)", arrival: "04:45",
-        pnr: "Details to be uploaded", aircraft: "—", price: "Details to be uploaded", qr: "Details to be uploaded"
+        destination: "Zürich (ZRH)", arrival: "12:25",
+        route: "KUL→DXB→ZRH via Dubai", 
+        passengers: [
+          {name: "Vividh Sharma", pdf: "https://github.com/vividhneo/downtozero/raw/main/kul-zrh-vividh.pdf"},
+          {name: "Amrita Chatterjee", pdf: "https://github.com/vividhneo/downtozero/raw/main/kul-zrh-amrita.pdf"}
+        ],
+        pnr: "Details to be uploaded", price: "Details to be uploaded"
       },
       "FL-EK087-2025-11-21": {
         type: "Flight", number: "EK087", carrier: "Emirates",
@@ -734,8 +744,20 @@
             <div>${(() => { add("Date", d.date); add("PNR / Confirmation", d.pnr || "Details to be uploaded"); add("Order No.", d.orderNo); return ""; })()}</div>
           </div>
           <div class="hr-dot" style="border-top:1px dotted var(--line);margin:10px 0"></div>
-          ${(() => { rows.length=0; add("Origin", d.origin); add("Departure", d.departure); add("Destination", d.destination); add("Arrival", d.arrival); add("Duration", d.duration); add("Aircraft", d.aircraft); add("Price", d.price); add("Passengers", d.passengers); return rows.join(""); })()}
-          ${d.pdf ? `<div style="margin-top:12px;text-align:center"><button onclick="viewPDF('${d.pdf}', '${d.carrier} ${d.number}')" class="btn" style="background:#E32526;color:white;border:none">📄 View Ticket</button></div>` : ''}
+          ${(() => { rows.length=0; add("Origin", d.origin); add("Departure", d.departure); add("Destination", d.destination); add("Arrival", d.arrival); add("Duration", d.duration); add("Aircraft", d.aircraft); add("Price", d.price); add("Route", d.route); return rows.join(""); })()}
+          ${d.passengers && Array.isArray(d.passengers) ? 
+            `<div style="margin-top:12px">
+              <div style="font-weight:600;margin-bottom:8px;color:#374151">Passengers & Tickets:</div>
+              ${d.passengers.map(p => `
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px dashed var(--ring)">
+                  <span>${p.name}</span>
+                  <button onclick="viewPDF('${p.pdf}', '${d.carrier} ${d.number} - ${p.name}')" class="btn" style="background:#E32526;color:white;border:none;font-size:11px;padding:4px 8px">📄 View Ticket</button>
+                </div>
+              `).join('')}
+            </div>` 
+            : d.passengers ? `${(() => { add("Passengers", d.passengers); return ""; })()}${d.pdf ? `<div style="margin-top:12px;text-align:center"><button onclick="viewPDF('${d.pdf}', '${d.carrier} ${d.number}')" class="btn" style="background:#E32526;color:white;border:none">📄 View Ticket</button></div>` : ''}` 
+            : ''
+          }
         </div>
         <div class="close"><button class="btn" onclick="closeInfo()">Close</button></div>
       `;
