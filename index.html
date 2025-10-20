@@ -652,7 +652,9 @@
         type: "Flight", number: "AK718", carrier: "AirAsia",
         date: "Thu, Nov 20, 2025", origin: "Singapore (SIN • T4)", departure: "20:15",
         destination: "Kuala Lumpur (KUL • T2)", arrival: "21:20",
-        pnr: "Details to be uploaded", duration: "≈1h05m", price: "Details to be uploaded", qr: "Details to be uploaded"
+        pnr: "HE7U8N", duration: "1h 5m", price: "Economy Promo", 
+        passengers: "Vividh Sharma, Amrita Chatterjee",
+        pdf: "https://github.com/vividhneo/downtozero/raw/main/sg-kl-flight.pdf"
       },
       "FL-EK343-2025-11-21": {
         type: "Flight", number: "EK343", carrier: "Emirates",
@@ -741,7 +743,8 @@
           <div>${(() => { add("Date", d.date); add("PNR / Confirmation", d.pnr || "Details to be uploaded"); add("Order No.", d.orderNo); return ""; })()}</div>
         </div>
         <div class="hr-dot" style="border-top:1px dotted var(--line);margin:10px 0"></div>
-        ${(() => { rows.length=0; add("Origin", d.origin); add("Departure", d.departure); add("Destination", d.destination); add("Arrival", d.arrival); add("Duration", d.duration); add("Aircraft", d.aircraft); add("Price", d.price); add("QR Code", d.qr || "Details to be uploaded"); return rows.join(""); })()}
+        ${(() => { rows.length=0; add("Origin", d.origin); add("Departure", d.departure); add("Destination", d.destination); add("Arrival", d.arrival); add("Duration", d.duration); add("Aircraft", d.aircraft); add("Price", d.price); add("Passengers", d.passengers); return rows.join(""); })()}
+        ${d.pdf ? `<div style="margin-top:12px;text-align:center"><a href="${d.pdf}" target="_blank" rel="noopener" class="btn" style="background:#E32526;color:white;text-decoration:none;display:inline-block">📄 View Ticket</a></div>` : ''}
       `;
       m.setAttribute('open','');
       setTimeout(() => document.querySelector('#modal .btn').focus(), 0);
