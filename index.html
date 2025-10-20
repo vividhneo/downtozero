@@ -184,7 +184,7 @@
               <svg class="logo" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2" fill="#2563EB"/><path d="M8 10h8M6 14h12" stroke="white" stroke-width="1.5"/></svg>
               <span class="label">Hotel</span>
             </span>
-            aCasa Zürich (Nov 21-22)
+            Acasa Suites Zurich Oerlikon (Nov 21-22)
             <button class="info-btn" onclick="openInfo('HOTEL-ZRH-ACASA-2025-11-21')" title="More info" aria-label="Hotel booking details">
               <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10v6M12 7h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
             </button>
@@ -257,6 +257,17 @@
             <svg class="logo" viewBox="0 0 24 14"><rect width="24" height="14" rx="2" fill="#D50000"/><line x1="4" y1="7" x2="20" y2="7" stroke="#fff" stroke-width="2"/><polyline points="14,4 17,7 14,10" fill="none" stroke="#fff" stroke-width="2"/><polyline points="10,4 7,7 10,10" fill="none" stroke="#fff" stroke-width="2"/></svg>
             <span class="label">SBB</span></span> Zürich HB → Interlaken Ost (~2h via Bern)
             <button class="info-btn" onclick="openInfo('RAIL-SBB-ZH-INT-2025-11-23')" title="SBB details">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10v6M12 7h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+          
+          <div class="note">
+            <span class="tail">
+              <svg class="logo" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2" fill="#2563EB"/><path d="M8 10h8M6 14h12" stroke="white" stroke-width="1.5"/></svg>
+              <span class="label">Hotel</span>
+            </span>
+            Dorint Blüemlisalp Interlaken (Nov 23-26)
+            <button class="info-btn" onclick="openInfo('HOTEL-INT-DORINT-2025-11-23')" title="More info" aria-label="Hotel booking details">
               <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10v6M12 7h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
             </button>
           </div>
@@ -732,13 +743,24 @@
       },
       
       "HOTEL-ZRH-ACASA-2025-11-21": {
-        type: "Hotel", number: "aCasa Zürich", carrier: "aCasa Hotels",
+        type: "Hotel", number: "Acasa Suites Zurich Oerlikon", carrier: "Acasa Hotels",
         date: "Nov 21-22, 2025", origin: "Check-in: Nov 21", departure: "—",
         destination: "Check-out: Nov 22", arrival: "—",
         address: "Schweizergasse 9, 8001 Zürich, Switzerland",
         guests: "Vividh Sharma, Amrita Chatterjee",
         nights: "1 night", roomType: "Details in booking",
         pdf: "https://github.com/vividhneo/downtozero/raw/main/zrh-acasa.pdf",
+        pnr: "Details in booking"
+      },
+      
+      "HOTEL-INT-DORINT-2025-11-23": {
+        type: "Hotel", number: "Dorint Blüemlisalp Interlaken", carrier: "Dorint Hotels",
+        date: "Nov 23-26, 2025", origin: "Check-in: Nov 23", departure: "—",
+        destination: "Check-out: Nov 26", arrival: "—",
+        address: "Promenade 59, 3800 Interlaken, Switzerland",
+        guests: "Vividh Sharma, Amrita Chatterjee",
+        nights: "3 nights", roomType: "Details in booking",
+        pdf: "https://github.com/vividhneo/downtozero/raw/main/interlaken-dorint.pdf",
         pnr: "Details in booking"
       }
     };
