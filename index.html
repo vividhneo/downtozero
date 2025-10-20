@@ -752,26 +752,51 @@
       m.setAttribute('open','');
       setTimeout(() => document.querySelector('#modal .btn').focus(), 0);
     }
-    function viewPDF(pdfUrl, title) {
+    async function viewPDF(pdfUrl, title) {
       const modal = document.getElementById('modal');
       const sheet = modal.querySelector('.sheet');
-      const modalTitle = document.getElementById('modal-title');
       
       // Switch to PDF mode
       sheet.classList.add('pdf-mode');
-      modalTitle.textContent = title + ' - Ticket';
       
-      // Create PDF viewer content
+      // Show loading state
       sheet.innerHTML = `
         <h3 id="modal-title">${title} - Ticket</h3>
         <div class="pdf-controls">
           <button class="btn" onclick="closeInfo()">← Back to Details</button>
           <button class="btn" onclick="window.open('${pdfUrl}', '_blank')">↗ Open in New Tab</button>
         </div>
-        <div class="pdf-viewer">
-          <iframe src="${pdfUrl}" width="100%" height="100%" style="border:none;display:block"></iframe>
+        <div class="pdf-viewer" style="display:flex;align-items:center;justify-content:center;color:#666">
+          Loading PDF...
         </div>
       `;
+      
+      try {
+        // Try to fetch and create a blob URL
+        const response = await fetch(pdfUrl);
+        if (response.ok) {
+          const blob = await response.blob();
+          const blobUrl = URL.createObjectURL(blob);
+          
+          // Use object element for better PDF support
+          sheet.querySelector('.pdf-viewer').innerHTML = `
+            <object data="${blobUrl}" type="application/pdf" width="100%" height="100%">
+              <iframe src="${blobUrl}" width="100%" height="100%" style="border:none"></iframe>
+            </object>
+          `;
+        } else {
+          throw new Error('Failed to fetch PDF');
+        }
+      } catch (error) {
+        // Fallback to Google Docs viewer
+        sheet.querySelector('.pdf-viewer').innerHTML = `
+          <iframe src="https://docs.google.com/viewer?url=${encodeURIComponent(pdfUrl)}&embedded=true" 
+                  width="100%" height="100%" style="border:none"
+                  onload="this.style.display='block'" 
+                  onerror="this.innerHTML='<div style=\\"text-align:center;padding:40px;color:#666\\"><p>📄 Unable to load PDF</p><button class=\\"btn\\" onclick=\\"window.open(\\'${pdfUrl}\\', \\'_blank\\')\\" style=\\"background:#E32526;color:white;border:none\\">Open in New Tab</button></div>'">
+          </iframe>
+        `;
+      }
     }
     
     function closeInfo(){ 
